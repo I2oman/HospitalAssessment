@@ -8,9 +8,20 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import com.example.hospitalassessment.database.DatabaseManager;
 
+/**
+ * MainApplication serves as the entry point for the hospital database management system.
+ * It initializes the primary application window and manages the application lifecycle.
+ */
 public class MainApplication extends Application {
-    private static DatabaseManager databaseManager;
+    private static DatabaseManager databaseManager; // Manages the application's database connection.
 
+    /**
+     * Initializes the application's main stage and sets up the primary scene.
+     * Loads the database configuration and establishes a connection.
+     *
+     * @param stage the main window of the JavaFX application
+     * @throws Exception if any error occurs during initialization or loading resources
+     */
     @Override
     public void start(Stage stage) throws Exception {
         Dotenv dotenv = Dotenv.load();
@@ -30,10 +41,19 @@ public class MainApplication extends Application {
         stage.show();
     }
 
+    /**
+     * The entry point of the application that launches the JavaFX runtime.
+     *
+     * @param args command-line arguments passed to the application
+     */
     public static void main(String[] args) {
         launch();
     }
 
+    /**
+     * Stops the application lifecycle by ensuring the database connection is properly closed.
+     * Logs a message during the process.
+     */
     @Override
     public void stop() {
         System.out.println("Closing database connection...");

@@ -1,7 +1,7 @@
 package com.example.hospitalassessment.models;
 
 public abstract class BaseEntity {
-    protected String id;
+    protected String id; // Unique identifier
 
     public BaseEntity(String id) {
         this.id = id;
@@ -17,6 +17,7 @@ public abstract class BaseEntity {
 
     @Override
     public String toString() {
+        // Returns a simple string representation with class name and ID
         return "BaseEntity{" +
                 "id='" + id + '\'' +
                 '}';

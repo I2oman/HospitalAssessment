@@ -5,6 +5,7 @@ public class Insurance extends BaseEntity {
     private String address;
     private String phone;
 
+    // Constructor to initialize insurance details
     public Insurance(String id, String company, String address, String phone) {
         super(id);
         this.company = company;
@@ -12,6 +13,7 @@ public class Insurance extends BaseEntity {
         this.phone = phone;
     }
 
+    // Getters and setters
     public String getCompany() {
         return company;
     }
@@ -38,6 +40,7 @@ public class Insurance extends BaseEntity {
 
     @Override
     public String toString() {
+        // Returns a readable string representation of the insurance
         return "Insurance{" +
                 "company='" + company + '\'' +
                 ", address='" + address + '\'' +

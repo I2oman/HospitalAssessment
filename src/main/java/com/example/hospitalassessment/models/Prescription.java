@@ -7,10 +7,11 @@ public class Prescription extends BaseEntity {
     private int dosage;
     private int duration;
     private String comment;
-    private Drug drug;
-    private Doctor doctor;
-    private Patient patient;
+    private Drug drug; // Prescribed drug
+    private Doctor doctor; // Doctor who prescribed the drug
+    private Patient patient; // Patient receiving the prescription
 
+    // Constructor to initialize prescription details
     public Prescription(String id, Date datePrescribed, int dosage, int duration, String comment, Drug drug, Doctor doctor, Patient patient) {
         super(id);
         this.datePrescribed = datePrescribed;
@@ -22,6 +23,7 @@ public class Prescription extends BaseEntity {
         this.patient = patient;
     }
 
+    // Getters and setters
     public Date getDatePrescribed() {
         return datePrescribed;
     }
@@ -80,6 +82,7 @@ public class Prescription extends BaseEntity {
 
     @Override
     public String toString() {
+        // Returns a readable string representation of the prescription
         return "Prescription{" +
                 "datePrescribed=" + datePrescribed +
                 ", dosage=" + dosage +

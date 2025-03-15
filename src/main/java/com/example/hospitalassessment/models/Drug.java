@@ -5,6 +5,7 @@ public class Drug extends BaseEntity {
     private String sideEffects;
     private String benefits;
 
+    // Constructor to initialize drug details
     public Drug(String id, String drugName, String sideEffects, String benefits) {
         super(id);
         this.drugName = drugName;
@@ -12,6 +13,7 @@ public class Drug extends BaseEntity {
         this.benefits = benefits;
     }
 
+    // Getters and setters
     public String getDrugName() {
         return drugName;
     }
@@ -38,6 +40,7 @@ public class Drug extends BaseEntity {
 
     @Override
     public String toString() {
+        // Returns a readable string representation of the drug
         return "Drug{" +
                 "drugName='" + drugName + '\'' +
                 ", sideEffects='" + sideEffects + '\'' +

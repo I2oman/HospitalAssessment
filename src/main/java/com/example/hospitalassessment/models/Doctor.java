@@ -8,6 +8,7 @@ public class Doctor extends BaseEntity {
     private String specialization;
     private String hospital;
 
+    // Constructor to initialize doctor details
     public Doctor(String id, String firstName, String surname, String address, String email, String specialization, String hospital) {
         super(id);
         this.firstName = firstName;
@@ -18,6 +19,7 @@ public class Doctor extends BaseEntity {
         this.hospital = hospital;
     }
 
+    // Getters and setters
     public String getFirstName() {
         return firstName;
     }
@@ -68,6 +70,7 @@ public class Doctor extends BaseEntity {
 
     @Override
     public String toString() {
+        // Returns a readable string representation of the doctor
         return "Doctor{" +
                 "firstName='" + firstName + '\'' +
                 ", surname='" + surname + '\'' +

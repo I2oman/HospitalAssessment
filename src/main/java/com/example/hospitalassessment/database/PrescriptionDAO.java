@@ -14,12 +14,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Manages CRUD operations for prescription-related data in the database.
+ * Interacts with PatientDAO, DoctorDAO, and DrugDAO.
+ * Utilizes a database connection to execute SQL queries.
+ */
 public class PrescriptionDAO {
-    private final Connection connection;
-    private final DoctorDAO doctorDAO;
-    private final PatientDAO patientDAO;
-    private final DrugDAO drugDAO;
+    private final Connection connection; // Represents the database connection.
+    private final DoctorDAO doctorDAO; // Manages doctor-related data operations.
+    private final PatientDAO patientDAO; // Manages patient-related data operations.
+    private final DrugDAO drugDAO; // Manages drug-related data operations.
 
+    /**
+     * Initializes a PrescriptionDAO instance with the provided DatabaseManager.
+     *
+     * @param dbManager the DatabaseManager instance for managing the database connection
+     */
     public PrescriptionDAO(DatabaseManager dbManager) {
         this.connection = dbManager.getConnection();
         this.doctorDAO = new DoctorDAO(dbManager);
@@ -27,6 +37,11 @@ public class PrescriptionDAO {
         this.drugDAO = new DrugDAO(dbManager);
     }
 
+    /**
+     * Retrieves all prescriptions from the database.
+     *
+     * @return a list of Prescription objects representing all prescriptions in the database.
+     */
     public List<Prescription> getAllPrescriptions() {
         List<Prescription> prescriptions = new ArrayList<>();
         String sql = "SELECT * FROM prescription";
@@ -43,6 +58,12 @@ public class PrescriptionDAO {
         return prescriptions;
     }
 
+    /**
+     * Retrieves a prescription by its unique identifier from the database.
+     *
+     * @param prescriptionId the unique identifier of the prescription to retrieve
+     * @return the Prescription corresponding to the specified ID, or null if not found
+     */
     public Prescription getPrescriptionById(String prescriptionId) {
         String sql = "SELECT * FROM prescription WHERE prescriptionid = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -57,6 +78,13 @@ public class PrescriptionDAO {
         return null;
     }
 
+    /**
+     * Extracts a Prescription object from the given ResultSet.
+     *
+     * @param rs the ResultSet containing prescription data.
+     * @return a Prescription object populated with data from the ResultSet.
+     * @throws SQLException if a database access error occurs.
+     */
     private Prescription extractPrescriptionFromResultSet(ResultSet rs) throws SQLException {
         Doctor doctor = doctorDAO.getDoctorById(rs.getString("doctorid"));
         Patient patient = patientDAO.getPatientById(rs.getString("patientid"));
@@ -74,6 +102,12 @@ public class PrescriptionDAO {
         );
     }
 
+    /**
+     * Adds a new prescription to the database.
+     *
+     * @param prescription the Prescription object to be added
+     * @return a Map.Entry containing a message as key and an alert type as value
+     */
     public Map.Entry<String, Alert.AlertType> addPrescription(Prescription prescription) {
         if (getPrescriptionById(prescription.getId()) != null) {
             return Map.entry("Error: A prescription with this ID already exists.", Alert.AlertType.ERROR);
@@ -99,6 +133,12 @@ public class PrescriptionDAO {
         }
     }
 
+    /**
+     * Updates an existing prescription in the database.
+     *
+     * @param prescription the Prescription object containing updated data
+     * @return a Map.Entry containing a message and an AlertType indicating success or error
+     */
     public Map.Entry<String, Alert.AlertType> updatePrescription(Prescription prescription) {
         if (getPrescriptionById(prescription.getId()) == null) {
             return Map.entry("Error: Prescription with this ID does not exist.", Alert.AlertType.ERROR);
@@ -124,6 +164,12 @@ public class PrescriptionDAO {
         }
     }
 
+    /**
+     * Deletes a prescription from the database based on the provided prescription ID.
+     *
+     * @param prescriptionId the unique identifier of the prescription to delete
+     * @return a message indicating whether the deletion was successful or an error occurred
+     */
     public String deletePrescription(String prescriptionId) {
         if (getPrescriptionById(prescriptionId) == null) {
             return "Error: Prescription with this ID does not exist.";

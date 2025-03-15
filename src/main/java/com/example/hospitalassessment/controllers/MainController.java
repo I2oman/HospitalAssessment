@@ -13,19 +13,34 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * MainController handles the initialization and interaction with table views,
+ * integrating database operations and view management for a user interface.
+ */
 public class MainController {
-    @FXML
+    @FXML // Dropdown for selecting a table to display.
     private ComboBox<String> tableSelector;
-    @FXML
+
+    @FXML // Container for loading selected table views.
     private AnchorPane tableContainer;
 
-    private DatabaseManager databaseManager;
-    private final Map<String, String> tableViews = new HashMap<>();
 
+    private DatabaseManager databaseManager; // Manages database connections and transactions.
+    private final Map<String, String> tableViews = new HashMap<>(); // Mapping of table names to their FXML file paths.
+
+    /**
+     * Sets the DatabaseManager instance for managing database operations.
+     *
+     * @param databaseManager the DatabaseManager instance to be associated with this controller
+     */
     public void setDatabaseManager(DatabaseManager databaseManager) {
         this.databaseManager = databaseManager;
     }
 
+    /**
+     * Initializes the controller by populating the table mapping and
+     * adding table options to the table selector dropdown.
+     */
     @FXML
     public void initialize() {
         tableViews.put("Doctors", "/com/example/hospitalassessment/doctor.fxml");
@@ -38,6 +53,11 @@ public class MainController {
         tableSelector.getItems().addAll(tableViews.keySet());
     }
 
+    /**
+     * Loads and displays the selected table view in the table container.
+     * Validates the selection and shows an error alert if no table is selected.
+     * Associates the controller of the loaded table view with the database manager.
+     */
     @FXML
     private void loadSelectedTable() {
         String selectedTable = tableSelector.getValue();

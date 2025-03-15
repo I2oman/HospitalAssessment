@@ -22,20 +22,33 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Controller class for managing Prescription operations in the UI.
+ * Implements database interactions, table view handling, and user actions.
+ */
 public class PrescriptionController implements TableController {
-    @FXML
+    @FXML // Table to display prescription records.
     private TableView<Prescription> prescriptionTable;
-    @FXML
+
+    @FXML // Columns representing Prescription properties.
     private TableColumn<Prescription, String> colPrescriptionID, colDatePrescribed, colDosage, colDuration, colComment, colDrug, colDoctor, colPatient;
-    @FXML
+
+    @FXML // Field for searching prescription records.
     private TextField searchField;
 
-    private DatabaseManager databaseManager;
-    private PrescriptionDAO prescriptionDAO;
-    private DrugDAO drugDAO;
-    private DoctorDAO doctorDAO;
-    private PatientDAO patientDAO;
 
+    private DatabaseManager databaseManager; // Manages database connections and transactions.
+    private PrescriptionDAO prescriptionDAO; // Data Access Object for prescription-related operations.
+    private DrugDAO drugDAO; // Data Access Object for drug-related operations.
+    private DoctorDAO doctorDAO; // Data Access Object for doctor-related operations.
+    private PatientDAO patientDAO; // Data Access Object for patient-related operations.
+
+
+    /**
+     * Sets the DatabaseManager for the controller and initializes DAO objects.
+     *
+     * @param dbManager the DatabaseManager instance to connect to the database
+     */
     @Override
     public void setDatabaseManager(DatabaseManager dbManager) {
         this.databaseManager = dbManager;
@@ -46,6 +59,10 @@ public class PrescriptionController implements TableController {
         loadPrescriptions();
     }
 
+    /**
+     * Initializes the Prescription table view by setting cell value factories
+     * and customizing the appearance of cells for specific columns.
+     */
     @FXML
     public void initialize() {
         colPrescriptionID.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -90,6 +107,10 @@ public class PrescriptionController implements TableController {
         );
     }
 
+    /**
+     * Loads prescriptions from the database and populates the table view.
+     * Applies filtering and sorting based on user input in the search field.
+     */
     private void loadPrescriptions() {
         ObservableList<Prescription> prescriptionList = FXCollections.observableArrayList(prescriptionDAO.getAllPrescriptions());
         FilteredList<Prescription> filteredData = new FilteredList<>(prescriptionList, p -> true);
@@ -116,11 +137,20 @@ public class PrescriptionController implements TableController {
         prescriptionTable.setItems(sortedData);
     }
 
+    /**
+     * Handles the Add Prescription action.
+     * Opens a form for creating a new prescription record.
+     */
     @FXML
     private void handleAddPrescription() {
         openEntryForm("Add Prescription", null, Set.of());
     }
 
+    /**
+     * Handles the modification of a selected prescription.
+     * Prompts the user with a form pre-filled with the prescription's data for editing.
+     * Displays a warning alert if no prescription is selected.
+     */
     @FXML
     private void handleModifyPrescription() {
         Prescription selectedPrescription = prescriptionTable.getSelectionModel().getSelectedItem();
@@ -141,6 +171,11 @@ public class PrescriptionController implements TableController {
         }
     }
 
+    /**
+     * Handles the deletion of a selected prescription.
+     * Prompts the user for confirmation, deletes the prescription if confirmed,
+     * and updates the table view. Displays a warning if no prescription is selected.
+     */
     @FXML
     private void handleDeletePrescription() {
         Prescription selectedPrescription = prescriptionTable.getSelectionModel().getSelectedItem();
@@ -158,13 +193,22 @@ public class PrescriptionController implements TableController {
         }
     }
 
+    /**
+     * Opens an entry form for creating or modifying a prescription.
+     *
+     * @param title               the title of the form window
+     * @param existingData        a map containing pre-populated field values, or empty if creating a new prescription
+     * @param undisplayableFields a set of field names that should not be displayed on the form
+     */
     private void openEntryForm(String title, Map<String, String> existingData, Set<String> undisplayableFields) {
         try {
+            // Load the FXML file for the entry form
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/hospitalassessment/entry_form.fxml"));
             Parent root = loader.load();
             EntryFormController controller = loader.getController();
             controller.setFormTitle(title);
 
+            // Define fields for a new prescription (empty values)
             if (existingData == null) {
                 existingData = new HashMap<>();
                 existingData.put("Prescription ID", "");
@@ -177,6 +221,8 @@ public class PrescriptionController implements TableController {
                 existingData.put("Comment", "");
             }
 
+            // Set form fields and hide fields that shouldn't be displayed
+            // and provide a list of available drugs, doctors and patients for selection.
             controller.setFields(
                     existingData,
                     undisplayableFields,
@@ -186,14 +232,17 @@ public class PrescriptionController implements TableController {
                     new DatePicker()
             );
 
+            // Create and configure a new window (Stage) for the form
             Stage stage = new Stage();
             stage.setTitle(title);
             stage.setScene(new Scene(root));
+            stage.initModality(Modality.WINDOW_MODAL); // Make it a modal window
+            stage.initOwner(prescriptionTable.getScene().getWindow()); // Attach it to the main window
 
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(prescriptionTable.getScene().getWindow());
-
+            // Preserve the original existing data for reference
             Map<String, String> finalExistingData = existingData;
+
+            // Define the action to be performed when the Save button is clicked
             controller.setOnSaveCallback(() -> {
                 Map<String, String> updatedValues = controller.getFieldValues();
 
@@ -202,6 +251,7 @@ public class PrescriptionController implements TableController {
                 Doctor selectedDoctor = doctorDAO.getDoctorByFullName(updatedValues.get("Doctor") == null ? finalExistingData.get("Doctor") : updatedValues.get("Doctor"));
                 Patient selectedPatient = patientDAO.getPatientByFullName(updatedValues.get("Patient") == null ? finalExistingData.get("Patient") : updatedValues.get("Patient"));
 
+                // Ensure that a valid drug, doctor, and patient are selected before proceeding
                 if (selectedDrug == null || selectedDoctor == null || selectedPatient == null) {
                     AlertHelper.showAlert("Error", "Invalid drug, doctor, or patient selection.", Alert.AlertType.ERROR);
                     return;
@@ -209,17 +259,24 @@ public class PrescriptionController implements TableController {
 
                 java.sql.Date sqlDate = null;
                 try {
+                    // Retrieve the date input, either from the updated values or the existing data
                     String dateInput = updatedValues.get("Date Prescribed") == null ? finalExistingData.get("Date Prescribed") : updatedValues.get("Date Prescribed");
+
+                    // Ensure the date is not empty
                     if (dateInput == null || dateInput.isBlank()) {
                         throw new IllegalArgumentException("Date Prescribed cannot be empty.");
                     }
+
+                    // Convert the input string to a SQL Date format
                     sqlDate = java.sql.Date.valueOf(dateInput);
                 } catch (IllegalArgumentException e) {
+                    // Show an error alert if the date format is incorrect
                     AlertHelper.showAlert("Input Error", "Invalid date format. Please use 'yyyy-mm-dd'.", Alert.AlertType.ERROR);
                     return;
                 }
 
                 try {
+                    // Create a Prescription object with updated values
                     Prescription prescription = new Prescription(
                             finalExistingData.get("Prescription ID").isEmpty() ? updatedValues.get("Prescription ID") : finalExistingData.get("Prescription ID"),
                             sqlDate,
@@ -231,12 +288,15 @@ public class PrescriptionController implements TableController {
                             selectedPatient
                     );
 
+                    // Determine whether to update an existing prescription or add a new one
                     Map.Entry<String, Alert.AlertType> resultMessage = undisplayableFields.contains("Prescription ID")
-                            ? prescriptionDAO.updatePrescription(prescription)
-                            : prescriptionDAO.addPrescription(prescription);
+                            ? prescriptionDAO.updatePrescription(prescription)    // Update if "Prescription ID" is not editable
+                            : prescriptionDAO.addPrescription(prescription);      // Otherwise, add a new prescription
 
+                    // Show an alert message with the result of the operation
                     AlertHelper.showAlert(title, resultMessage.getKey(), resultMessage.getValue());
 
+                    // If the operation was successful, close the form and refresh the prescription table
                     if (resultMessage.getValue() != Alert.AlertType.ERROR) {
                         stage.close(); // Close window only on success
                         loadPrescriptions(); // Refresh table
@@ -246,9 +306,10 @@ public class PrescriptionController implements TableController {
                 }
             });
 
+            // Display the form and wait for user interaction
             stage.showAndWait();
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Print error details if an exception occurs
         }
     }
 }

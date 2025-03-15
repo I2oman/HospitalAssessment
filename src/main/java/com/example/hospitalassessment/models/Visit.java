@@ -3,12 +3,13 @@ package com.example.hospitalassessment.models;
 import java.sql.Date;
 
 public class Visit {
-    private Patient patient;
-    private Doctor doctor;
+    private Patient patient; // The patient who had the visit
+    private Doctor doctor; // The doctor who conducted the visit
     private Date dateOfVisit;
     private String symptoms;
     private String diagnosis;
 
+    // Constructor to initialize visit details
     public Visit(Patient patient, Doctor doctor, Date dateOfVisit, String symptoms, String diagnosis) {
         this.patient = patient;
         this.doctor = doctor;
@@ -17,6 +18,7 @@ public class Visit {
         this.diagnosis = diagnosis;
     }
 
+    // Getters and setters
     public Patient getPatient() {
         return patient;
     }
@@ -59,6 +61,7 @@ public class Visit {
 
     @Override
     public String toString() {
+        // Returns a readable string representation of the visit
         return "Visit{" +
                 "patient=" + patient +
                 ", doctor=" + doctor +

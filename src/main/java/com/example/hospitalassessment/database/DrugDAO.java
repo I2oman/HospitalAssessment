@@ -11,13 +11,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Handles operations related to the Drug entity in the database.
+ */
 public class DrugDAO {
-    private final Connection connection;
+    private final Connection connection; // Represents the database connection.
 
+    /**
+     * Constructs a DrugDAO instance with a database connection.
+     *
+     * @param dbManager the DatabaseManager providing the database connection
+     */
     public DrugDAO(DatabaseManager dbManager) {
         this.connection = dbManager.getConnection();
     }
 
+    /**
+     * Retrieves a list of all drugs from the database.
+     *
+     * @return a list of Drug objects representing all drugs in the database.
+     */
     public List<Drug> getAllDrugs() {
         List<Drug> drugs = new ArrayList<>();
         String sql = "SELECT * FROM drug";
@@ -34,6 +47,12 @@ public class DrugDAO {
         return drugs;
     }
 
+    /**
+     * Retrieves a Drug object based on the specified drug ID.
+     *
+     * @param drugId the ID of the drug to retrieve
+     * @return the Drug object if found, otherwise null
+     */
     public Drug getDrugById(String drugId) {
         String sql = "SELECT * FROM drug WHERE drugid = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -48,6 +67,13 @@ public class DrugDAO {
         return null;
     }
 
+    /**
+     * Extracts a Drug object from the given ResultSet.
+     *
+     * @param rs the ResultSet containing drug data
+     * @return a Drug object populated with data from the ResultSet
+     * @throws SQLException if a database access error occurs
+     */
     private Drug extractDrugFromResultSet(ResultSet rs) throws SQLException {
         return new Drug(
                 rs.getString("drugid"),
@@ -57,6 +83,12 @@ public class DrugDAO {
         );
     }
 
+    /**
+     * Adds a drug to the database.
+     *
+     * @param drug the drug to be added
+     * @return a Map.Entry containing a status message and an alert type
+     */
     public Map.Entry<String, Alert.AlertType> addDrug(Drug drug) {
         if (getDrugById(drug.getId()) != null) {
             return Map.entry("Error: A drug with this ID already exists.", Alert.AlertType.ERROR);
@@ -78,6 +110,12 @@ public class DrugDAO {
         }
     }
 
+    /**
+     * Updates the details of an existing drug in the database.
+     *
+     * @param drug the Drug object containing updated information
+     * @return a Map.Entry with a status message and corresponding Alert.AlertType
+     */
     public Map.Entry<String, Alert.AlertType> updateDrug(Drug drug) {
         if (getDrugById(drug.getId()) == null) {
             return Map.entry("Error: Drug with this ID does not exist.", Alert.AlertType.ERROR);
@@ -99,6 +137,12 @@ public class DrugDAO {
         }
     }
 
+    /**
+     * Deletes a drug from the database based on the provided drug ID.
+     *
+     * @param drugId the ID of the drug to delete
+     * @return a status message indicating success or an error
+     */
     public String deleteDrug(String drugId) {
         if (getDrugById(drugId) == null) {
             return "Error: Drug with this ID does not exist.";

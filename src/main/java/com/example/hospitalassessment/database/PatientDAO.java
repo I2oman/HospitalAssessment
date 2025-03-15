@@ -12,15 +12,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Manages operations related to patient data in the database, including retrieval, insertion,
+ * update, and deletion of patient records.
+ * Relies on an InsuranceDAO to handle associated insurance information.
+ */
 public class PatientDAO {
-    private final Connection connection;
-    private final InsuranceDAO insuranceDAO;
+    private final Connection connection; // Represents the database connection.
+    private final InsuranceDAO insuranceDAO; // Manages insurance-related data operations.
 
+    /**
+     * Constructs a PatientDAO instance with a database connection and initializes the InsuranceDAO.
+     *
+     * @param dbManager The DatabaseManager providing the database connection.
+     */
     public PatientDAO(DatabaseManager dbManager) {
         this.connection = dbManager.getConnection();
         this.insuranceDAO = new InsuranceDAO(dbManager);
     }
 
+    /**
+     * Retrieves all patients from the database.
+     *
+     * @return A list of all patients.
+     */
     public List<Patient> getAllPatients() {
         List<Patient> patients = new ArrayList<>();
         String sql = "SELECT * FROM patient";
@@ -37,6 +52,12 @@ public class PatientDAO {
         return patients;
     }
 
+    /**
+     * Retrieves a patient by their unique ID from the database.
+     *
+     * @param patientId The unique identifier of the patient to retrieve.
+     * @return A Patient object representing the retrieved patient, or null if no patient is found.
+     */
     public Patient getPatientById(String patientId) {
         String sql = "SELECT * FROM patient WHERE patientid = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -51,6 +72,12 @@ public class PatientDAO {
         return null;
     }
 
+    /**
+     * Retrieves a patient from the database by their email address.
+     *
+     * @param email The email address of the patient to retrieve.
+     * @return The Patient object if found, or null if no patient is found with the given email.
+     */
     public Patient getPatientByEmail(String email) {
         String sql = "SELECT * FROM patient WHERE email = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -65,6 +92,12 @@ public class PatientDAO {
         return null;
     }
 
+    /**
+     * Retrieves a patient from the database by their full name.
+     *
+     * @param fullName The full name of the patient to retrieve, formatted as "firstname surname".
+     * @return The Patient object if found, or null if no patient matches the given full name.
+     */
     public Patient getPatientByFullName(String fullName) {
         String sql = "SELECT * FROM patient WHERE CONCAT(firstname, ' ', surname) = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -80,6 +113,13 @@ public class PatientDAO {
     }
 
 
+    /**
+     * Extracts and constructs a Patient object from the given ResultSet.
+     *
+     * @param rs the ResultSet containing patient data
+     * @return a Patient object populated with data from the ResultSet
+     * @throws SQLException if an SQL error occurs while accessing the ResultSet
+     */
     private Patient extractPatientFromResultSet(ResultSet rs) throws SQLException {
         Insurance insurance = insuranceDAO.getInsuranceById(rs.getString("insuranceid"));
 
@@ -95,6 +135,13 @@ public class PatientDAO {
         );
     }
 
+    /**
+     * Attempts to add a new patient record to the database.
+     *
+     * @param patient The patient object containing details to be added.
+     * @return A map entry where the key is a message indicating the result of the operation,
+     * and the value is the alert type (success or error).
+     */
     public Map.Entry<String, Alert.AlertType> addPatient(Patient patient) {
         if (getPatientById(patient.getId()) != null) {
             return Map.entry("Error: A patient with this ID already exists.", Alert.AlertType.ERROR);
@@ -125,12 +172,11 @@ public class PatientDAO {
     }
 
     /**
-     * Updates the details of an existing patient in the database.
+     * Updates an existing patient's details in the database.
      *
-     * @param patient The patient object containing updated fields, such as first name,
-     *                surname, postcode, address, phone, email, and insurance details.
-     * @return A map entry where the key represents a message indicating the result of the operation,
-     * and the value represents the type of alert (success or error).
+     * @param patient The patient object containing updated details.
+     * @return A Map.Entry where the key is a message indicating the result of the update operation,
+     * and the value is the alert type (success or error).
      */
     public Map.Entry<String, Alert.AlertType> updatePatient(Patient patient) {
         if (getPatientById(patient.getId()) == null) {
@@ -161,6 +207,12 @@ public class PatientDAO {
         }
     }
 
+    /**
+     * Deletes a patient record from the database by their unique ID.
+     *
+     * @param patientId The unique identifier of the patient to delete.
+     * @return A string indicating the result of the deletion operation.
+     */
     public String deletePatient(String patientId) {
         if (getPatientById(patientId) == null) {
             return "Error: Patient with this ID does not exist.";

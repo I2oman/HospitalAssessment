@@ -6,13 +6,27 @@ import javafx.scene.control.Alert;
 import java.sql.*;
 import java.util.*;
 
+/**
+ * DoctorDAO is responsible for handling CRUD operations for the Doctor entity in the database.
+ * It utilizes a database connection provided by DatabaseManager for executing queries.
+ */
 public class DoctorDAO {
-    private final Connection connection;
+    private final Connection connection; // Represents the database connection.
 
+    /**
+     * Initializes DoctorDAO with a database connection.
+     *
+     * @param dbManager the DatabaseManager providing the database connection
+     */
     public DoctorDAO(DatabaseManager dbManager) {
         this.connection = dbManager.getConnection();
     }
 
+    /**
+     * Retrieves all doctors from the database.
+     *
+     * @return a list of Doctor objects representing all doctors in the database.
+     */
     public List<Doctor> getAllDoctors() {
         List<Doctor> doctors = new ArrayList<>();
         String sql = "SELECT * FROM doctor";
@@ -29,6 +43,12 @@ public class DoctorDAO {
         return doctors;
     }
 
+    /**
+     * Retrieves a Doctor object from the database based on the provided doctor ID.
+     *
+     * @param doctorId the unique identifier of the doctor.
+     * @return a Doctor object if found, otherwise null.
+     */
     public Doctor getDoctorById(String doctorId) {
         String sql = "SELECT * FROM doctor WHERE doctorid = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -43,6 +63,12 @@ public class DoctorDAO {
         return null;
     }
 
+    /**
+     * Retrieves a Doctor object from the database based on the provided email.
+     *
+     * @param email the email of the doctor to retrieve
+     * @return the Doctor object if found, or null if no matching doctor exists
+     */
     public Doctor getDoctorByEmail(String email) {
         String sql = "SELECT * FROM doctor WHERE email = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -57,6 +83,12 @@ public class DoctorDAO {
         return null;
     }
 
+    /**
+     * Retrieves a doctor from the database based on the full name.
+     *
+     * @param fullName the full name of the doctor to retrieve
+     * @return a Doctor object if found, otherwise null
+     */
     public Doctor getDoctorByFullName(String fullName) {
         String sql = "SELECT * FROM doctor WHERE CONCAT(firstname, ' ', surname) = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -71,7 +103,13 @@ public class DoctorDAO {
         return null;
     }
 
-
+    /**
+     * Extracts a Doctor object from the given ResultSet.
+     *
+     * @param rs the ResultSet containing doctor data
+     * @return a Doctor object constructed from the ResultSet
+     * @throws SQLException if a database access error occurs
+     */
     private Doctor extractDoctorFromResultSet(ResultSet rs) throws SQLException {
         return new Doctor(
                 rs.getString("doctorid"),
@@ -84,7 +122,12 @@ public class DoctorDAO {
         );
     }
 
-
+    /**
+     * Adds a new doctor to the database.
+     *
+     * @param doctor the Doctor object containing the doctor's details to add
+     * @return a Map.Entry containing a message and an Alert.AlertType indicating success or failure
+     */
     public Map.Entry<String, Alert.AlertType> addDoctor(Doctor doctor) {
         if (getDoctorById(doctor.getId()) != null) {
             return Map.entry("Error: Doctor with this ID already exists.", Alert.AlertType.ERROR);
@@ -111,6 +154,12 @@ public class DoctorDAO {
         }
     }
 
+    /**
+     * Updates an existing doctor's details in the database.
+     *
+     * @param doctor the Doctor object containing updated details of the doctor
+     * @return a Map.Entry containing a status message and an Alert.AlertType indicating success or error
+     */
     public Map.Entry<String, Alert.AlertType> updateDoctor(Doctor doctor) {
         if (getDoctorById(doctor.getId()) == null) {
             return Map.entry("Error: Doctor with this ID does not exist.", Alert.AlertType.ERROR);
@@ -137,6 +186,12 @@ public class DoctorDAO {
         }
     }
 
+    /**
+     * Deletes a doctor from the database based on the provided doctor ID.
+     *
+     * @param doctorId the unique identifier of the doctor to be deleted.
+     * @return a message indicating the result of the deletion operation.
+     */
     public String deleteDoctor(String doctorId) {
         if (getDoctorById(doctorId) == null) {
             return "Error: Doctor with this ID does not exist.";
