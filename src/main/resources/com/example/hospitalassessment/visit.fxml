@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="5" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.hospitalassessment.controllers.VisitController">
+    <TextField fx:id="searchField" promptText="Search..."/>
+
+    <TableView fx:id="visitTable" prefHeight="580.0">
+        <columns>
+            <TableColumn text="Patient" fx:id="colPatient"/>
+            <TableColumn text="Doctor" fx:id="colDoctor"/>
+            <TableColumn text="Date of Visit" fx:id="colDateOfVisit"/>
+            <TableColumn text="Symptoms" fx:id="colSymptoms"/>
+            <TableColumn text="Diagnosis" fx:id="colDiagnosis"/>
+        </columns>
+    </TableView>
+
+    <HBox alignment="CENTER" spacing="10.0">
+        <children>
+            <Button mnemonicParsing="false" onAction="#handleAddVisit" text="Add Visit"/>
+            <Button mnemonicParsing="false" onAction="#handleModifyVisit" text="Modify Visit"/>
+            <Button mnemonicParsing="false" onAction="#handleDeleteVisit" text="Delete Visit"/>
+        </children>
+    </HBox>
+</VBox>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="5" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.hospitalassessment.controllers.PatientController">
+    <TextField fx:id="searchField" promptText="Search..."/>
+
+    <TableView fx:id="patientTable" prefHeight="580.0">
+        <columns>
+            <TableColumn text="Patient ID" fx:id="colPatientID"/>
+            <TableColumn text="First Name" fx:id="colFirstName"/>
+            <TableColumn text="Surname" fx:id="colSurname"/>
+            <TableColumn text="Postcode" fx:id="colPostcode"/>
+            <TableColumn text="Address" fx:id="colAddress"/>
+            <TableColumn text="Phone" fx:id="colPhone"/>
+            <TableColumn text="Email" fx:id="colEmail"/>
+            <TableColumn text="Insurance" fx:id="colInsurance"/>
+        </columns>
+    </TableView>
+
+    <HBox alignment="CENTER" spacing="10.0">
+        <children>
+            <Button mnemonicParsing="false" onAction="#handleAddPatient" text="Add Patient"/>
+            <Button mnemonicParsing="false" onAction="#handleModifyPatient" text="Modify Patient"/>
+            <Button mnemonicParsing="false" onAction="#handleDeletePatient" text="Delete Patient"/>
+        </children>
+    </HBox>
+</VBox>

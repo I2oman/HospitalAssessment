@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<VBox spacing="5" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.hospitalassessment.controllers.DrugController">
+    <TextField fx:id="searchField" promptText="Search..."/>
+
+    <TableView fx:id="drugTable" prefHeight="580.0">
+        <columns>
+            <TableColumn fx:id="colDrugID" text="Drug ID"/>
+            <TableColumn fx:id="colDrugName" text="Drug Name"/>
+            <TableColumn fx:id="colSideEffects" text="Side Effects"/>
+            <TableColumn fx:id="colBenefits" text="Benefits"/>
+        </columns>
+    </TableView>
+
+    <HBox alignment="CENTER" spacing="10.0">
+        <children>
+            <Button mnemonicParsing="false" onAction="#handleAddDrug" text="Add Drug"/>
+            <Button mnemonicParsing="false" onAction="#handleModifyDrug" text="Modify Drug"/>
+            <Button mnemonicParsing="false" onAction="#handleDeleteDrug" text="Delete Drug"/>
+        </children>
+    </HBox>
+</VBox>

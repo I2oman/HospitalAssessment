@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="5" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.hospitalassessment.controllers.InsuranceController">
+    <TextField fx:id="searchField" promptText="Search..."/>
+
+    <TableView fx:id="insuranceTable" prefHeight="580.0">
+        <columns>
+            <TableColumn text="Insurance ID" fx:id="colInsuranceID"/>
+            <TableColumn text="Company Name" fx:id="colCompany"/>
+            <TableColumn text="Address" fx:id="colAddress"/>
+            <TableColumn text="Phone" fx:id="colPhone"/>
+        </columns>
+    </TableView>
+
+    <HBox alignment="CENTER" spacing="10.0">
+        <children>
+            <Button mnemonicParsing="false" onAction="#handleAddInsurance" text="Add Insurance"/>
+            <Button mnemonicParsing="false" onAction="#handleModifyInsurance" text="Modify Insurance"/>
+            <Button mnemonicParsing="false" onAction="#handleDeleteInsurance" text="Delete Insurance"/>
+        </children>
+    </HBox>
+</VBox>
