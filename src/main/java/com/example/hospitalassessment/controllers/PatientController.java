@@ -2,6 +2,8 @@ package com.example.hospitalassessment.controllers;
 
 import com.example.hospitalassessment.database.InsuranceDAO;
 import com.example.hospitalassessment.database.PatientDAO;
+import com.example.hospitalassessment.database.VisitDAO;
+import com.example.hospitalassessment.models.Doctor;
 import com.example.hospitalassessment.models.Insurance;
 import com.example.hospitalassessment.models.Patient;
 import com.example.hospitalassessment.database.DatabaseManager;
@@ -36,7 +38,7 @@ public class PatientController implements TableController {
     private TableView<Patient> patientTable;
 
     @FXML // Columns representing Patient properties.
-    private TableColumn<Patient, String> colPatientID, colFirstName, colSurname, colPostcode, colAddress, colPhone, colEmail, colInsurance;
+    private TableColumn<Patient, String> colPatientID, colFirstName, colSurname, colPostcode, colAddress, colPhone, colEmail, colInsurance, colMainDoctor;
 
     @FXML // Field for searching patient records.
     private TextField searchField;
@@ -45,6 +47,7 @@ public class PatientController implements TableController {
     private DatabaseManager databaseManager; // Manages database connections and transactions.
     private PatientDAO patientDAO; // Data Access Object for patient-related operations.
     private InsuranceDAO insuranceDAO; // Data Access Object for insurance-related operations.
+    private VisitDAO visitDAO;
 
     /**
      * Sets the provided DatabaseManager instance and initializes related DAOs.
@@ -56,6 +59,7 @@ public class PatientController implements TableController {
         this.databaseManager = dbManager;
         this.patientDAO = new PatientDAO(databaseManager);
         this.insuranceDAO = new InsuranceDAO(databaseManager);
+        this.visitDAO = new VisitDAO(dbManager);
         loadPatients();
     }
 
@@ -75,6 +79,13 @@ public class PatientController implements TableController {
         colInsurance.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getInsurance() != null ? cellData.getValue().getInsurance().getCompany() : "NHS")
         );
+        colMainDoctor.setCellValueFactory(cellData -> {
+            Doctor mainDoctor = visitDAO.getMainDoctorForPatient(cellData.getValue().getId());
+            return new SimpleStringProperty(mainDoctor != null
+                    ? mainDoctor.getFirstName() + " " + mainDoctor.getSurname()
+                    : "N/A");
+        });
+
     }
 
     /**

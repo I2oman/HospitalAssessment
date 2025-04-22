@@ -75,6 +75,23 @@ public class VisitDAO {
         return null;
     }
 
+    public Doctor getMainDoctorForPatient(String patientId) {
+        String sql = "SELECT doctorid, COUNT(*) AS visit_count FROM visit WHERE patientid = ? GROUP BY doctorid ORDER BY visit_count DESC LIMIT 1";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, patientId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String doctorId = rs.getString("doctorid");
+                return doctorDAO.getDoctorById(doctorId);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
     /**
      * Extracts a Visit object from the given ResultSet.
      *

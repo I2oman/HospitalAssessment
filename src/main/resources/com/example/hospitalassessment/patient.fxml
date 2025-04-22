@@ -17,6 +17,7 @@
             <TableColumn text="Phone" fx:id="colPhone"/>
             <TableColumn text="Email" fx:id="colEmail"/>
             <TableColumn text="Insurance" fx:id="colInsurance"/>
+            <TableColumn text="Main Doctor" fx:id="colMainDoctor"/>
         </columns>
     </TableView>
 
